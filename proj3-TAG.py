@@ -169,23 +169,23 @@ for vertice in vertices_ordenados:
     # ... mas analisa só os vértices dos jogos (vértices que ainda não têm cor atribuída)
         
         # lê as cores dos vizinhos que possuem cor
-        cores_vizinhos = {cores_rodadas[grafo.nodes[vizinho]["color"]] for vizinho in grafo.neighbors(vertice) if "color" in grafo.nodes[vizinho]}
+        rodadas_vizinhos = {cores_rodadas[grafo.nodes[vizinho]["color"]] for vizinho in grafo.neighbors(vertice) if "color" in grafo.nodes[vizinho]}
         
         # encontra a menor rodada disponível, que deve:
         # - não ser a rodada de nenhum de seus vizinhos
         # - não ter 4 ou mais jogos 
         # (para possibilitar a ocorrência de 14 rodadas com 2 turnos cada)
-        cor = 0
-        while cor in cores_vizinhos or rodadas_jogos[cor] >= 4:
-            cor += 1
+        rodada = 0
+        while rodada in rodadas_vizinhos or rodadas_jogos[rodada] >= 4:
+            rodada += 1
 
         # atribui a cor da mesma rodada ao vértice e ao vértice com mando oposto
-        grafo.nodes[vertice]["color"] = rodadas_cores[cor]
+        grafo.nodes[vertice]["color"] = rodadas_cores[rodada]
         mandante, visitante = vertice.split(", ")
-        grafo.nodes[f"{visitante}, {mandante}"]["color"] = rodadas_cores[cor]
+        grafo.nodes[f"{visitante}, {mandante}"]["color"] = rodadas_cores[rodada]
 
         # incrementa a contagem de jogos por rodada
-        rodadas_jogos[cor] += 2
+        rodadas_jogos[rodada] += 2
 
 # para visualizar o grafo:
 node_color = [grafo.nodes[node]["color"] for node in grafo.nodes()]

@@ -14,12 +14,14 @@ O objetivo deste projeto é implementar um algoritmo de coloração ótima de ar
 ## Dependências
 
 Instale as bibliotecas **NetworkX** e **Matplotlib** usando o pip. Os seguintes comandos podem ser utilizados:
+
 ```pip install networkx```
+
 ```pip install matplotlib```
 
 Tendo as dependências instaladas, o arquivo ```proj3-TAG.py``` poderá ser executado de forma a fornecer a solução do problema.
 
-### Referências
+## Referências
 
 Slides de aula fornecidos pelo Prof. Díbio;
 

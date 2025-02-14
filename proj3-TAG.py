@@ -104,8 +104,6 @@ grafo.nodes["R12"]["color"] = "pink"
 grafo.nodes["R13"]["color"] = "gray"
 grafo.nodes["R14"]["color"] = "olive"
 
-# para fazer a coloração dos demais vértices:
-
 # dicionário no formato {rodada-1 : cor da rodada}
 rodadas_cores = {
     0 : "blue",
@@ -141,6 +139,8 @@ cores_rodadas = {
     'gray': 12,
     'olive': 13
 }
+
+# para fazer a coloração dos demais vértices:
 
 # dicionário no formato {rodada-1 : número de jogos na rodada}
 rodadas_jogos = {

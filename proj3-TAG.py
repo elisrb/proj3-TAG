@@ -142,6 +142,7 @@ cores_rodadas = {
     'olive': 13
 }
 
+# dicionário no formato {rodada-1 : número de jogos na rodada}
 rodadas_jogos = {
     0: 0,
     1: 0,

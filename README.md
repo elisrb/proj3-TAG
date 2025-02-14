@@ -14,8 +14,9 @@ O objetivo deste projeto é implementar um algoritmo de coloração ótima de ar
 O projeto foi implementado utilizando coloração de vértices em um grafo que segue as seguintes regras:
 
 - há um vértice *Ri* para cada rodada *i* de 1 a 14;
-- há dois vértices *A, B* e *B, A* para cada par de vértices distintos *A* e *B*;
-- há uma aresta entre dois vértices se eles não podem ter a mesma cor (restrições de jogos e rodadas, e restrições entre jogos que possuem os mesmos times, uma vez que um time só pode jogar duas vezes por rodada -- uma em cada turno, em que os times que jogam em cada turno são os mesmos, o que muda é o mando)
+- cada cor corresponde a uma rodada, ou seja, cada vértice *Ri* terá uma cor distinta;
+- há dois vértices *A, B* e *B, A* para cada par de times distintos *A* e *B*;
+- há uma aresta entre dois vértices se eles não podem ter a mesma cor (restrições de jogos e rodadas, e restrições entre jogos que possuem os mesmos times, uma vez que um time só pode jogar duas vezes por rodada: uma em cada turno, em que os times que jogam em cada turno são os mesmos, o que muda é o mando)
 
 A partir do grafo, foi implementado um algoritmo guloso de coloração de vértices para determinar quais jogos aconteceriam em cada rodada.
 

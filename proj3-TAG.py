@@ -9,8 +9,10 @@ Prof. Díbio
 Desenvolvido por: Elis Rodrigues Borges - 231018875
 """
 
-import networkx as nx
-import matplotlib.pyplot as plt
+import networkx as nx  # para representar o grafo
+import matplotlib.pyplot as plt  # para visualizar o grafo
+
+### CONSTRUÇÃO DO GRAFO ###
 
 times = ["DFC", "TFC", "AFC", "LFC", "FFC", "OFC", "CFC"]
 grafo = nx.Graph()
@@ -19,9 +21,9 @@ grafo = nx.Graph()
 for time1 in times:
     for time2 in times:
         if time1 != time2:
+            # o formato do nome do vértice é "mandante, visitante"
             grafo.add_node(f"{time1}, {time2}")
             grafo.add_node(f"{time2}, {time1}")
-            # o primeiro time é o mandante
 
 # para adicionar as restrições de jogos:
 for vertice1 in list(grafo.nodes()):
@@ -30,8 +32,9 @@ for vertice1 in list(grafo.nodes()):
 
     # verifica todos os vértices do grafo
     for vertice2 in list(grafo.nodes()):
-        # não considera para análise o vértice igual ao vértice 1
-        # nem o vértice (visitante, mandante)
+        # não considera para análise o próprio vértice 1
+        # nem o vértice com mando oposto -> "visitante, mandante"
+        # uma vez que jogos iguais com mandos opostos sempre estarão na mesma rodada
         if mandante1 not in vertice2 or visitante1 not in vertice2:
 
             # adiciona uma aresta entre jogos com times em comum
@@ -83,12 +86,108 @@ grafo.add_edge("R2", "CFC, TFC")
 grafo.add_edge("R3", "TFC, CFC")
 grafo.add_edge("R3", "CFC, TFC")
 
+### COLORAÇÃO ###
+
+# para atribuir cores para cada rodada:
+grafo.nodes["R1"]["color"] = "blue"
+grafo.nodes["R2"]["color"] = "green"
+grafo.nodes["R3"]["color"] = "red"
+grafo.nodes["R4"]["color"] = "cyan"
+grafo.nodes["R5"]["color"] = "magenta"
+grafo.nodes["R6"]["color"] = "yellow"
+grafo.nodes["R7"]["color"] = "tomato"
+grafo.nodes["R8"]["color"] = "limegreen"
+grafo.nodes["R9"]["color"] = "dodgerblue"
+grafo.nodes["R10"]["color"] = "gold"
+grafo.nodes["R11"]["color"] = "brown"
+grafo.nodes["R12"]["color"] = "pink"
+grafo.nodes["R13"]["color"] = "gray"
+grafo.nodes["R14"]["color"] = "olive"
+
+# para fazer a coloração dos demais vértices:
+
+# dicionário no formato {rodada-1 : cor da rodada}
+rodadas_cores = {
+    0 : "blue",
+    1 : "green",
+    2 : "red",
+    3 : "cyan",
+    4 : "magenta",
+    5 : "yellow",
+    6 : "tomato",
+    7 : "limegreen",
+    8 : "dodgerblue",
+    9 : "gold",
+    10 : "brown",
+    11 : "pink",
+    12 : "gray",
+    13 : "olive"
+}
+
+# dicionário no formato {cor da rodada : rodada-1}
+cores_rodadas = {
+    'blue': 0,
+    'green': 1,
+    'red': 2,
+    'cyan': 3,
+    'magenta': 4,
+    'yellow': 5,
+    'tomato': 6,
+    'limegreen': 7,
+    'dodgerblue': 8,
+    'gold': 9,
+    'brown': 10,
+    'pink': 11,
+    'gray': 12,
+    'olive': 13
+}
+
+rodadas_jogos = {
+    0: 0,
+    1: 0,
+    2: 0,
+    3: 0,
+    4: 0,
+    5: 0,
+    6: 0,
+    7: 0,
+    8: 0,
+    9: 0,
+    10: 0,
+    11: 0,
+    12: 0,
+    13: 0
+}
+
+# ordena os vértices pelo grau em ordem decrescente
+vertices_ordenados = sorted(grafo.nodes(), key=lambda v: -grafo.degree(v))
+
+# passa por todos os vértices...
+for vertice in vertices_ordenados:
+    if "color" not in grafo.nodes[vertice]:
+    # ... mas analisa só os vértices dos jogos (vértices que ainda não têm cor atribuída)
+        
+        # lê as cores dos vizinhos que possuem cor
+        cores_vizinhos = {cores_rodadas[grafo.nodes[vizinho]["color"]] for vizinho in grafo.neighbors(vertice) if "color" in grafo.nodes[vizinho]}
+        
+        # encontra a menor rodada disponível, que deve:
+        # - não ser a rodada de nenhum de seus vizinhos
+        # - não ter 4 ou mais jogos 
+        # (para possibilitar a ocorrência de 14 rodadas com 2 turnos cada)
+        cor = 0
+        while cor in cores_vizinhos or rodadas_jogos[cor] >= 4:
+            cor += 1
+
+        # atribui a cor da mesma rodada ao vértice e ao vértice com mando oposto
+        grafo.nodes[vertice]["color"] = rodadas_cores[cor]
+        mandante, visitante = vertice.split(", ")
+        grafo.nodes[f"{visitante}, {mandante}"]["color"] = rodadas_cores[cor]
+
+        # incrementa a contagem de jogos por rodada
+        rodadas_jogos[cor] += 2
+
 # para visualizar o grafo:
-"""
-"""
-pos = nx.spring_layout(grafo, k=0.3, iterations=50)  # k = distância entre nós, iterations = número de iterações
-
-nx.draw(grafo, pos, with_labels=True, node_size=1000, node_color="lightblue", font_size=10, edge_color="gray", width=0.5)
-#nx.draw(grafo, pos, with_labels=True, node_size=100, node_color="lightblue", edge_color="gray", width=0.5)
-
+node_color = [grafo.nodes[node]["color"] for node in grafo.nodes()]
+pos = nx.spring_layout(grafo, k=0.3, iterations=50)
+nx.draw(grafo, pos, with_labels=True, node_size=1000, node_color=node_color, font_size=10, edge_color="gray", width=0.5)
 plt.show()

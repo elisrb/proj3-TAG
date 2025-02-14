@@ -103,6 +103,16 @@ grafo.nodes["R11"]["color"] = "brown"
 grafo.nodes["R12"]["color"] = "pink"
 grafo.nodes["R13"]["color"] = "gray"
 grafo.nodes["R14"]["color"] = "olive"
+for vertice in grafo.nodes():
+    if "color" not in grafo.nodes[vertice]:
+        grafo.nodes[vertice]["color"] = "white"
+
+# para visualizar o grafo inicial:
+node_color = [grafo.nodes[node]["color"] for node in grafo.nodes()]
+pos = nx.spring_layout(grafo, k=0.3, iterations=50)
+nx.draw(grafo, pos, with_labels=True, node_size=1000, node_color=node_color, font_size=10, edge_color="gray", width=0.5)
+plt.title("Coloração Inicial", fontsize = 16, color="black", loc="center")
+plt.show()
 
 # dicionário no formato {rodada-1 : cor da rodada}
 rodadas_cores = {
@@ -144,20 +154,20 @@ cores_rodadas = {
 
 # dicionário no formato {rodada-1 : número de jogos na rodada}
 rodadas_jogos = {
-    0: 0,
-    1: 0,
-    2: 0,
-    3: 0,
-    4: 0,
-    5: 0,
-    6: 0,
-    7: 0,
-    8: 0,
-    9: 0,
-    10: 0,
-    11: 0,
-    12: 0,
-    13: 0
+    0: [],
+    1: [],
+    2: [],
+    3: [],
+    4: [],
+    5: [],
+    6: [],
+    7: [],
+    8: [],
+    9: [],
+    10: [],
+    11: [],
+    12: [],
+    13: []
 }
 
 # ordena os vértices pelo grau em ordem decrescente
@@ -165,30 +175,38 @@ vertices_ordenados = sorted(grafo.nodes(), key=lambda v: -grafo.degree(v))
 
 # passa por todos os vértices...
 for vertice in vertices_ordenados:
-    if "color" not in grafo.nodes[vertice]:
+    if grafo.nodes[vertice]["color"] == "white":
     # ... mas analisa só os vértices dos jogos (vértices que ainda não têm cor atribuída)
         
         # lê as cores dos vizinhos que possuem cor
-        rodadas_vizinhos = {cores_rodadas[grafo.nodes[vizinho]["color"]] for vizinho in grafo.neighbors(vertice) if "color" in grafo.nodes[vizinho]}
-        
+        rodadas_vizinhos = {cores_rodadas[grafo.nodes[vizinho]["color"]] for vizinho in grafo.neighbors(vertice) if grafo.nodes[vizinho]["color"] != "white"}
+
         # encontra a menor rodada disponível, que deve:
         # - não ser a rodada de nenhum de seus vizinhos
         # - não ter 4 ou mais jogos 
         # (para possibilitar a ocorrência de 14 rodadas com 2 turnos cada)
         rodada = 0
-        while rodada in rodadas_vizinhos or rodadas_jogos[rodada] >= 4:
+        while rodada in rodadas_vizinhos or len(rodadas_jogos[rodada]) >= 4:
             rodada += 1
 
         # atribui a cor da mesma rodada ao vértice e ao vértice com mando oposto
+        # (o jogo com mando oposto vai acontecer no 2º turno da rodada)
         grafo.nodes[vertice]["color"] = rodadas_cores[rodada]
         mandante, visitante = vertice.split(", ")
         grafo.nodes[f"{visitante}, {mandante}"]["color"] = rodadas_cores[rodada]
-
+        
         # incrementa a contagem de jogos por rodada
-        rodadas_jogos[rodada] += 2
+        rodadas_jogos[rodada].append(vertice)
+        rodadas_jogos[rodada].append(f"{visitante}, {mandante}")
 
-# para visualizar o grafo:
+print("Lista no formato {rodada: jogos da rodada}")
+print("(de forma que os jogos da rodada estão no formato: 1º turno, 2º turno, 1º turno, 2º turno)")
+for i in range(1, 15):
+    print(f"R{i}:", rodadas_jogos[i-1])
+
+# para visualizar o grafo final:
 node_color = [grafo.nodes[node]["color"] for node in grafo.nodes()]
 pos = nx.spring_layout(grafo, k=0.3, iterations=50)
 nx.draw(grafo, pos, with_labels=True, node_size=1000, node_color=node_color, font_size=10, edge_color="gray", width=0.5)
+plt.title("Coloração Final", fontsize = 16, color="black", loc="center")
 plt.show()

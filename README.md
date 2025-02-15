@@ -16,9 +16,9 @@ O projeto foi implementado utilizando coloração de vértices em um grafo que s
 - há um vértice *Ri* para cada rodada *i* de 1 a 14;
 - cada cor corresponde a uma rodada, ou seja, cada vértice *Ri* terá uma cor distinta;
 - há dois vértices *A, B* e *B, A* para cada par de times distintos *A* e *B*;
-- há uma aresta entre dois vértices se eles não podem ter a mesma cor (restrições de jogos e rodadas, e restrições entre jogos que possuem os mesmos times, uma vez que um time só pode jogar duas vezes por rodada: uma em cada turno, em que os times que jogam em cada turno são os mesmos, o que muda é o mando)
+- há uma aresta entre dois vértices se eles não podem ter a mesma cor (restrições de jogos e rodadas, e restrições entre jogos que possuem os mesmos times, uma vez que um time só pode jogar uma vez por rodada)
 
-A partir do grafo, foi implementado um algoritmo guloso de coloração de vértices para determinar quais jogos aconteceriam em cada rodada.
+A partir do grafo, foi implementado um algoritmo guloso de coloração de vértices para determinar quais jogos aconteceriam em cada rodada, limitando as rodadas a terem 3 jogos cada, de forma a forçar a solução a ter 14 rodadas.
 
 Os resultados são exibidos na tela, sendo a primeira tela exibida a coloração inicial e, ao fechar esta tela, é exibida a coloração final, após a execução do algoritmo. Além disso, a lista de quais jogos pertencem a cada rodada é fornecida como output no terminal ao executar o código.
 

@@ -27,20 +27,21 @@ for time1 in times:
 
 # para adicionar as restrições de jogos:
 for vertice1 in list(grafo.nodes()):
+
     # separa os nomes dos times que vão jogar
     mandante1, visitante1 = vertice1.split(", ")
 
     # verifica todos os vértices do grafo
     for vertice2 in list(grafo.nodes()):
+
         # não considera para análise o próprio vértice 1
-        # nem o vértice com mando oposto -> "visitante, mandante"
-        # uma vez que jogos iguais com mandos opostos sempre estarão na mesma rodada
-        if mandante1 not in vertice2 or visitante1 not in vertice2:
+        if vertice1 != vertice2:
 
             # adiciona uma aresta entre jogos com times em comum
             # (já que o mesmo time não pode jogar duas vezes em um mesmo turno)
             if mandante1 in vertice2 or visitante1 in vertice2:
                 grafo.add_edge(vertice1, vertice2)
+                print(f"{vertice1} não pode com {vertice2}")
 
             else:
                 # separa os nomes dos times que vão jogar
@@ -49,10 +50,12 @@ for vertice1 in list(grafo.nodes()):
                 # TFC mandante não com OFC mandante:
                 if mandante1 == "TFC" and mandante2 == "OFC":
                     grafo.add_edge(vertice1, vertice2)
+                    print(f"{vertice1} não pode com {vertice2}")
 
                 # AFC mandante não com FFC mandante:
                 elif mandante1 == "AFC" and mandante2 == "FFC":
                     grafo.add_edge(vertice1, vertice2)
+                    print(f"{vertice1} não pode com {vertice2}")
 
 # para adicionar os vértices das rodadas:
 for i in range(1, 15):
@@ -150,8 +153,6 @@ cores_rodadas = {
     'olive': 13
 }
 
-# para fazer a coloração dos demais vértices:
-
 # dicionário no formato {rodada-1 : número de jogos na rodada}
 rodadas_jogos = {
     0: [],
@@ -170,11 +171,11 @@ rodadas_jogos = {
     13: []
 }
 
-# ordena os vértices pelo grau em ordem decrescente
-vertices_ordenados = sorted(grafo.nodes(), key=lambda v: -grafo.degree(v))
+total=0
+# para fazer a coloração dos demais vértices:
 
 # passa por todos os vértices...
-for vertice in vertices_ordenados:
+for vertice in grafo.nodes():
     if grafo.nodes[vertice]["color"] == "white":
     # ... mas analisa só os vértices dos jogos (vértices que ainda não têm cor atribuída)
         
@@ -183,24 +184,23 @@ for vertice in vertices_ordenados:
 
         # encontra a menor rodada disponível, que deve:
         # - não ser a rodada de nenhum de seus vizinhos
-        # - não ter 4 ou mais jogos 
-        # (para possibilitar a ocorrência de 14 rodadas com 2 turnos cada)
+        # - não ter 3 ou mais jogos 
+        # (para possibilitar a ocorrência de 14 rodadas)
         rodada = 0
-        while rodada in rodadas_vizinhos or len(rodadas_jogos[rodada]) >= 4:
+        while rodada in rodadas_vizinhos:# or len(rodadas_jogos[rodada]) >= 3:
+            print(f"{vertice} não pode na rodada {rodada+1}")
             rodada += 1
 
-        # atribui a cor da mesma rodada ao vértice e ao vértice com mando oposto
-        # (o jogo com mando oposto vai acontecer no 2º turno da rodada)
-        grafo.nodes[vertice]["color"] = rodadas_cores[rodada]
-        mandante, visitante = vertice.split(", ")
-        grafo.nodes[f"{visitante}, {mandante}"]["color"] = rodadas_cores[rodada]
-        
-        # incrementa a contagem de jogos por rodada
-        rodadas_jogos[rodada].append(vertice)
-        rodadas_jogos[rodada].append(f"{visitante}, {mandante}")
+        if(rodada<14):
+            # atribui a cor da mesma rodada ao vértice
+            grafo.nodes[vertice]["color"] = rodadas_cores[rodada]
+            
+            # incrementa a contagem de jogos por rodada
+            rodadas_jogos[rodada].append(vertice)
+            total+=1
+            print(f"adicionou {vertice} na rodada {rodada+1}, total de jogos já alocados: {total}")
 
 print("Lista no formato {rodada: jogos da rodada}")
-print("(de forma que os jogos da rodada estão no formato: 1º turno, 2º turno, 1º turno, 2º turno)")
 for i in range(1, 15):
     print(f"R{i}:", rodadas_jogos[i-1])
 

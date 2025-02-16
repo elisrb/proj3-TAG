@@ -197,16 +197,15 @@ while max_vertices_coloridos < 42:
                 rodada += 1
 
             if(rodada<14):
-                # atribui a cor da mesma rodada ao vértice
+                # atribui a cor da rodada ao vértice
                 grafo.nodes[vertice]["color"] = rodadas_cores[rodada]
-                
                 # incrementa a contagem de jogos por rodada
                 rodadas_jogos[rodada].append(vertice)
                 total+=1
             else:
                 break  # se não foi possível uma coloração com 14 cores, interrompe o processo
 
-    # para verificar se todos os jogos possuem uma rodada definida:
+    # para verificar a condição de parada do loop:
     max_vertices_coloridos = max(max_vertices_coloridos, total)
 
 # para imprimir a lista dos resultados da coloração final:

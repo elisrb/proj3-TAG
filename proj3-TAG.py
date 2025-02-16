@@ -11,6 +11,8 @@ Desenvolvido por: Elis Rodrigues Borges - 231018875
 
 import networkx as nx  # para representar o grafo
 import matplotlib.pyplot as plt  # para visualizar o grafo
+#from itertools import permutations # para mudar a ordem dos vértices
+from random import shuffle # para mudar a ordem dos vértices
 
 ### CONSTRUÇÃO DO GRAFO ###
 
@@ -153,52 +155,81 @@ cores_rodadas = {
     'olive': 13
 }
 
-# dicionário no formato {rodada-1 : número de jogos na rodada}
-rodadas_jogos = {
-    0: [],
-    1: [],
-    2: [],
-    3: [],
-    4: [],
-    5: [],
-    6: [],
-    7: [],
-    8: [],
-    9: [],
-    10: [],
-    11: [],
-    12: [],
-    13: []
-}
-
-total=0
 # para fazer a coloração dos demais vértices:
 
-# passa por todos os vértices...
-for vertice in grafo.nodes():
-    if grafo.nodes[vertice]["color"] == "white":
-    # ... mas analisa só os vértices dos jogos (vértices que ainda não têm cor atribuída)
-        
-        # lê as cores dos vizinhos que possuem cor
-        rodadas_vizinhos = {cores_rodadas[grafo.nodes[vizinho]["color"]] for vizinho in grafo.neighbors(vertice) if grafo.nodes[vizinho]["color"] != "white"}
+# gerar todas as permutações da ordem dos vértices
+#todas_permutacoes = list(permutations(list(grafo.nodes())))
+max_vertices_coloridos = 0
+vertices = list(grafo.nodes()).copy()
 
-        # encontra a menor rodada disponível, que deve:
-        # - não ser a rodada de nenhum de seus vizinhos
-        # - não ter 3 ou mais jogos 
-        # (para possibilitar a ocorrência de 14 rodadas)
-        rodada = 0
-        while rodada in rodadas_vizinhos:# or len(rodadas_jogos[rodada]) >= 3:
-            print(f"{vertice} não pode na rodada {rodada+1}")
-            rodada += 1
+# percorrer as permutações
+#for permutacao in todas_permutacoes:
+while max_vertices_coloridos < 42:
+    # para reatribuir as cores iniciais para cada rodada:
+    for vertice in grafo.nodes():
+        grafo.nodes[vertice]["color"] = "white"
+    grafo.nodes["R1"]["color"] = "blue"
+    grafo.nodes["R2"]["color"] = "green"
+    grafo.nodes["R3"]["color"] = "red"
+    grafo.nodes["R4"]["color"] = "cyan"
+    grafo.nodes["R5"]["color"] = "magenta"
+    grafo.nodes["R6"]["color"] = "yellow"
+    grafo.nodes["R7"]["color"] = "tomato"
+    grafo.nodes["R8"]["color"] = "limegreen"
+    grafo.nodes["R9"]["color"] = "dodgerblue"
+    grafo.nodes["R10"]["color"] = "gold"
+    grafo.nodes["R11"]["color"] = "brown"
+    grafo.nodes["R12"]["color"] = "pink"
+    grafo.nodes["R13"]["color"] = "gray"
+    grafo.nodes["R14"]["color"] = "olive"
+    
+    # dicionário no formato {rodada-1 : número de jogos na rodada}
+    rodadas_jogos = {
+        0: [],
+        1: [],
+        2: [],
+        3: [],
+        4: [],
+        5: [],
+        6: [],
+        7: [],
+        8: [],
+        9: [],
+        10: [],
+        11: [],
+        12: [],
+        13: []
+    }
 
-        if(rodada<14):
-            # atribui a cor da mesma rodada ao vértice
-            grafo.nodes[vertice]["color"] = rodadas_cores[rodada]
+    total = 0  # total de vértices coloridos
+
+    # passa por todos os vértices...
+    for vertice in vertices:
+        if grafo.nodes[vertice]["color"] == "white":
+        # ... mas analisa só os vértices dos jogos (vértices que ainda não têm cor atribuída)
             
-            # incrementa a contagem de jogos por rodada
-            rodadas_jogos[rodada].append(vertice)
-            total+=1
-            print(f"adicionou {vertice} na rodada {rodada+1}, total de jogos já alocados: {total}")
+            # lê as cores dos vizinhos que possuem cor
+            rodadas_vizinhos = {cores_rodadas[grafo.nodes[vizinho]["color"]] for vizinho in grafo.neighbors(vertice) if grafo.nodes[vizinho]["color"] != "white"}
+
+            # encontra a menor rodada disponível
+            rodada = 0
+            while rodada in rodadas_vizinhos:
+                print(f"{vertice} não pode na rodada {rodada+1}")
+                rodada += 1
+
+            if(rodada<14):
+                # atribui a cor da mesma rodada ao vértice
+                grafo.nodes[vertice]["color"] = rodadas_cores[rodada]
+                
+                # incrementa a contagem de jogos por rodada
+                rodadas_jogos[rodada].append(vertice)
+                total+=1
+                print(f"adicionou {vertice} na rodada {rodada+1}, total de jogos já alocados: {total}")
+            else:
+                break  # se não foi possível uma coloração com 14 cores, interrompe o processo
+
+    max_vertices_coloridos = max(max_vertices_coloridos, total)
+    shuffle(vertices)
 
 print("Lista no formato {rodada: jogos da rodada}")
 for i in range(1, 15):
